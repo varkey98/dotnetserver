@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 #clean
-dotnet nuget locals all --clear
+#dotnet nuget locals all --clear
+#dotnet restore
 
 #add
 dotnet add package OpenTelemetry.Api -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry.Api/bin/Debug --prerelease
@@ -9,4 +10,5 @@ dotnet add package OpenTelemetry.Api.ProviderBuilderExtensions -s /Users/varkeyc
 dotnet add package OpenTelemetry -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry/bin/Debug --prerelease
 dotnet add package OpenTelemetry.Instrumentation.Http -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry.Instrumentation.Http/bin/Debug --prerelease
 dotnet add package OpenTelemetry.Exporter.Console -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry.Exporter.Console/bin/Debug --prerelease
-
+dotnet add package OpenTelemetry.Extensions.Hosting -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry.Extensions.Hosting/bin/Debug --prerelease              
+dotnet add package OpenTelemetry.Instrumentation.AspNetCore -s /Users/varkeychanjacob/Projects/opentelemetry-dotnet/src/OpenTelemetry.Instrumentation.AspNetCore/bin/Debug --prerelease
