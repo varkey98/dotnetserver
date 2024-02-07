@@ -4,17 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.3.2" />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry\Opentelemetry.csproj" />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Api\OpenTelemetry.Api.csproj"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Api.ProviderBuilderExtensions\OpenTelemetry.Api.ProviderBuilderExtensions.csproj"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Instrumentation.Http\OpenTelemetry.Instrumentation.Http"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Exporter.Console\OpenTelemetry.Exporter.Console.csproj"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Extensions.Hosting\OpenTelemetry.Extensions.Hosting.csproj"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Instrumentation.AspNetCore\OpenTelemetry.Instrumentation.AspNetCore.csproj"  />
-      <ProjectReference Include="C:\Users\varkeychan_jacob\dotnetagent\opentelemetry-dotnet\src\OpenTelemetry.Exporter.OpenTelemetryProtocol\OpenTelemetry.Exporter.OpenTelemetryProtocol.csproj"  />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 </Project>
