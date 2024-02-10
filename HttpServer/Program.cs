@@ -1,11 +1,11 @@
 using System.Text;
 using Newtonsoft.Json;
-
+using Traceable;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// var traceableAgent = TraceableAgentBuilder.CreateBuilder().AddAspNetCoreInstrumentation(builder.Services).Build();
-// builder.Services.AddSingleton(traceableAgent);
+var traceableAgent = TraceableAgentBuilder.CreateBuilder().AddAspNetCoreInstrumentation(builder.Services).Build();
+builder.Services.AddSingleton(traceableAgent);
 var app = builder.Build();
 
 
