@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var traceableAgent = TraceableAgentBuilder.CreateBuilder().AddAspNetCoreInstrumentation(builder.Services).Build();
 builder.Services.AddSingleton(traceableAgent);
+builder.Services.AddLogging();
 var app = builder.Build();
 
 
