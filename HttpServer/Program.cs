@@ -1,11 +1,7 @@
 using System.Text;
 using Newtonsoft.Json;
-using Traceable;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var traceableAgent = TraceableAgentBuilder.CreateBuilder().AddAspNetCoreInstrumentation(builder.Services).Build();
-builder.Services.AddSingleton(traceableAgent);
 builder.Services.AddLogging();
 var app = builder.Build();
 
@@ -21,7 +17,6 @@ app.MapPost("/hello", async delegate(HttpContext context)
         string requestJson = sr.ReadToEndAsync().Result;
         req = JsonConvert.DeserializeAnonymousType(requestJson, req);
     }
-
 
     // var httpClient = new HttpClient();
     // var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://catfact.ninja/fact");
