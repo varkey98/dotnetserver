@@ -1,5 +1,5 @@
 # Response by API
-## /sum
+## /add
 ### Request
 ```
 {
