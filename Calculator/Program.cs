@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
+builder.Services.AddTraceableAgent();
 var app = builder.Build();
 
 
