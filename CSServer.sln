@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer", "HttpServer\Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator\Calculator.csproj", "{61F64837-6718-4274-97D1-5E7C4DACF36B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcServer", "GrpcServer\GrpcServer.csproj", "{8E2A6B73-AE26-47DD-8979-0A3210A67C7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +21,9 @@ Global
 		{61F64837-6718-4274-97D1-5E7C4DACF36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61F64837-6718-4274-97D1-5E7C4DACF36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61F64837-6718-4274-97D1-5E7C4DACF36B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E2A6B73-AE26-47DD-8979-0A3210A67C7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E2A6B73-AE26-47DD-8979-0A3210A67C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E2A6B73-AE26-47DD-8979-0A3210A67C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E2A6B73-AE26-47DD-8979-0A3210A67C7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcServer";
+
+package greet;
+
+// The greeting service definition.
+service CatWorld {
+  // Sends a greeting
+  rpc CatFact (CatFactRequest) returns (CatFactResponse);
+}
+
+// The request message containing the user's name.
+message CatFactRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message CatFactResponse {
+  string message = 1;
+  string fact = 2;
+}

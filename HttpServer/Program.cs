@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
@@ -8,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
 builder.Services.AddTraceableAgent();
+builder.Services.Configure<KestrelServerOptions>(o => o.AllowSynchronousIO = false);
 var app = builder.Build();
 var httpClient = new HttpClient();
 app.MapPost("/hello", async delegate (HttpContext context)
@@ -20,7 +22,7 @@ app.MapPost("/hello", async delegate (HttpContext context)
     Request req = new();
     using (var sr = new StreamReader(context.Request.Body))
     {
-        string requestJson = sr.ReadToEndAsync().Result;
+        string requestJson = await sr.ReadToEndAsync();
         req = JsonConvert.DeserializeAnonymousType(requestJson, req);
     }
 
@@ -29,6 +31,7 @@ app.MapPost("/hello", async delegate (HttpContext context)
         JsonConvert.SerializeObject(upstreamRequest),
         Encoding.UTF8,
         Application.Json);
+
 
     using (Activity activity = Activity.Current.Source.StartActivity("GET", ActivityKind.Client))
     {
