@@ -8,6 +8,7 @@ package greet;
 service CatWorld {
   // Sends a greeting
   rpc CatFact (CatFactRequest) returns (CatFactResponse);
+  rpc CatFactStream(stream CatFactRequest) returns (stream CatFactResponse);
 }
 
 // The request message containing the user's name.
