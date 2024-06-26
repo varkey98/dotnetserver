@@ -8,12 +8,17 @@ public class Program
     public static void Main(string[] args)
     {
         Console.WriteLine("Hello World!");
-        List<string> users = ["Liam", "Olivia", "Noah", "Emma", "Oliver", "Charlotte", "James",	"Amelia", "Elijah", "Sophia"];
+        List<string> temp = ["Liam", "Olivia", "Noah", "Emma", "Oliver", "Charlotte", "James",	"Amelia", "Elijah", "Sophia"];
+        List<string> users = [];
+        for (int i=0; i<10; ++i) 
+        {
+            users.AddRange(temp);
+        }
 
         GrpcChannel channel = GrpcChannel.ForAddress("http://localhost:8080");
         var client = new CatWorld.CatWorldClient(channel);
 
-        var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(1000));
         using var call = client.CatFactStream(cancellationToken: cancellationToken.Token);
 
         Task task = Task.WhenAll(new []
@@ -40,6 +45,6 @@ public class Program
 
         });
 
-        task.Wait();
+        task.Wait(cancellationToken.Token);
     }
 }
