@@ -1,3 +1,4 @@
+using System.Text;
 using Grpc.Core;
 using Newtonsoft.Json;
 
@@ -11,7 +12,6 @@ public class CatFactService(ILogger<CatFactService> logger, HttpClient client) :
 
     public override async Task<CatFactResponse> CatFact(CatFactRequest request, ServerCallContext context)
     {
-
         return await UpstreamService(request);
     }
 
@@ -23,6 +23,26 @@ public class CatFactService(ILogger<CatFactService> logger, HttpClient client) :
             await responseStream.WriteAsync(await UpstreamService(request));
         }
     }
+
+    public override async Task<CatFactResponse> CatFactClientStream(IAsyncStreamReader<CatFactRequest> requestStream, ServerCallContext context)
+    {
+        StringBuilder names = new();
+        while(await requestStream.MoveNext() && !context.CancellationToken.IsCancellationRequested)
+        {
+            names.Append(requestStream.Current.Name + ", ");
+        }
+        int length = names.Length -1;
+        return await UpstreamService(new CatFactRequest{Name=names.ToString()[..length]});
+    }
+
+    public override async Task CatFactServerStream(CatFactServerStreamRequest request, IServerStreamWriter<CatFactResponse> responseStream, ServerCallContext context)
+    {
+        for(int i=0; i<request.Count; ++i)
+        {
+            await responseStream.WriteAsync(await UpstreamService(new CatFactRequest{Name=request.Name}));
+        }
+    }
+
 
     private async Task<CatFactResponse> UpstreamService(CatFactRequest request)
     {

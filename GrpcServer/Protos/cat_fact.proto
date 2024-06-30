@@ -9,6 +9,8 @@ service CatWorld {
   // Sends a greeting
   rpc CatFact (CatFactRequest) returns (CatFactResponse);
   rpc CatFactStream(stream CatFactRequest) returns (stream CatFactResponse);
+  rpc CatFactClientStream(stream CatFactRequest) returns (CatFactResponse);
+  rpc CatFactServerStream(CatFactServerStreamRequest) returns (stream CatFactResponse);
 }
 
 // The request message containing the user's name.
@@ -20,4 +22,9 @@ message CatFactRequest {
 message CatFactResponse {
   string message = 1;
   string fact = 2;
+}
+
+message CatFactServerStreamRequest {
+  string name = 1;
+  int32 count = 2;
 }
