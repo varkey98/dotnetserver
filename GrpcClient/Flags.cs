@@ -15,5 +15,5 @@ public enum Mode
     UnaryCall,
     ClientStreamingCall,
     ServerStreamingCall,
-    BiderctionalStreamingCall
+    BidirectionalStreamingCall
 }

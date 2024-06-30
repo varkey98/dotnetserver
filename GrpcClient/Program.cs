@@ -6,6 +6,20 @@ using GrpcServer;
 
 public class Program
 {
+    static readonly List<string> ListOfNames =
+    [
+        "Liam",
+        "Olivia",
+        "Noah",
+        "Emma",
+        "Oliver",
+        "Charlotte",
+        "James",
+        "Amelia",
+        "Elijah",
+        "Sophia"
+    ];
+
     public static void Main(string[] args)
     {
         var parser = new Parser(opts =>
@@ -17,53 +31,78 @@ public class Program
 
     private static void UnaryCall(GrpcChannel channel)
     {
-        List<string> temp =
-        [
-            "Liam",
-            "Olivia",
-            "Noah",
-            "Emma",
-            "Oliver",
-            "Charlotte",
-            "James",
-            "Amelia",
-            "Elijah",
-            "Sophia"
-        ];
-
-        string name = temp.OrderBy(s => Guid.NewGuid()).First();
+        string name = ListOfNames.OrderBy(s => Guid.NewGuid()).First();
         var client = new CatWorld.CatWorldClient(channel);
 
-        using var call = client.CatFactAsync(new CatFactRequest{Name = name});
-        Task task = Task.Run(async() =>
+        using var call = client.CatFactAsync(new CatFactRequest { Name = name });
+        Task task = Task.Run(async () =>
         {
             CatFactResponse response = await call.ResponseAsync;
             Console.WriteLine(response);
         });
 
         task.Wait();
+    }
 
+    private static void ClientStreamingCall(GrpcChannel channel)
+    {
+        List<string> users = [];
+        for (int i = 0; i < 1; ++i)
+        {
+            users.AddRange(ListOfNames);
+        }
+
+        var client = new CatWorld.CatWorldClient(channel);
+        var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(1000));
+        using var call = client.CatFactClientStream(cancellationToken: cancellationToken.Token);
+
+        Task task = Task.Run(async () =>
+        {
+            foreach (var user in users)
+            {
+                await call.RequestStream.WriteAsync(new CatFactRequest { Name = user });
+            }
+
+            await call.RequestStream.CompleteAsync();
+
+            CatFactResponse response = await call.ResponseAsync;
+            Console.WriteLine(response);
+        });
+
+        task.Wait(cancellationToken: cancellationToken.Token);
+    }
+
+    private static void ServerStreamingCall(GrpcChannel channel)
+    {
+        string name = ListOfNames.OrderBy(s => Guid.NewGuid()).First();
+
+        var client = new CatWorld.CatWorldClient(channel);
+        var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(1000));
+        using var call = client.CatFactServerStream(
+            new CatFactServerStreamRequest { Name = name, Count = 10 },
+            cancellationToken: cancellationToken.Token
+        );
+
+        Task task = Task.Run(async () =>
+        {
+            while (
+                !cancellationToken.IsCancellationRequested
+                && await call.ResponseStream.MoveNext(cancellationToken.Token)
+            )
+            {
+                Console.WriteLine(call.ResponseStream.Current);
+            }
+        });
+
+        task.Wait(cancellationToken.Token);
     }
 
     private static void BiderctionalStreamingCall(GrpcChannel channel)
     {
-        List<string> temp =
-        [
-            "Liam",
-            "Olivia",
-            "Noah",
-            "Emma",
-            "Oliver",
-            "Charlotte",
-            "James",
-            "Amelia",
-            "Elijah",
-            "Sophia"
-        ];
         List<string> users = [];
         for (int i = 0; i < 1; ++i)
         {
-            users.AddRange(temp);
+            users.AddRange(ListOfNames);
         }
 
         var client = new CatWorld.CatWorldClient(channel);
@@ -110,9 +149,12 @@ public class Program
                 UnaryCall(channel);
                 break;
             case Mode.ClientStreamingCall:
-            case Mode.ServerStreamingCall:
+                ClientStreamingCall(channel);
                 break;
-            case Mode.BiderctionalStreamingCall:
+            case Mode.ServerStreamingCall:
+                ServerStreamingCall(channel);
+                break;
+            case Mode.BidirectionalStreamingCall:
                 BiderctionalStreamingCall(channel);
                 break;
         }
