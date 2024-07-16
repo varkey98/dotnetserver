@@ -10,7 +10,7 @@ builder.Services.AddGrpc();
  
 builder.Services.AddLogging();
 builder.Services.AddHttpClient();
-builder.Services.AddTraceableAgent();
+// builder.Services.AddTraceableAgent();
 
 
 var app = builder.Build();

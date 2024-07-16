@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <ProjectReference Include="../../dotnetagent/src/Traceable.Agent/Traceable.Agent.csproj" />
+      <PackageReference Include="Traceable.Agent" Version="1.0.1" />
+      <!-- <ProjectReference Include="../../dotnetagent/src/Traceable.Agent/Traceable.Agent.csproj" /> -->
     </ItemGroup>
 </Project>
