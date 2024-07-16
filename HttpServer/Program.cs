@@ -110,6 +110,34 @@ app.MapPost("/dotnetecho", async delegate (HttpContext context)
     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
 });
 
+app.MapPost("/echo", async delegate (HttpContext context)
+{
+    long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+    HttpRequest request = context.Request;
+
+    // parse request 
+    Request req = new();
+    using (var sr = new StreamReader(context.Request.Body))
+    {
+        string requestJson = await sr.ReadToEndAsync();
+        req = JsonConvert.DeserializeAnonymousType(requestJson, req);
+    }
+
+    var upstreamRequest = new UpStreamRequest { Val1 = req.Num1, Val2 = req.Num2 };
+    var upstreamReqBody = new StringContent(
+        JsonConvert.SerializeObject(upstreamRequest),
+        Encoding.UTF8,
+        Application.Json);
+
+
+    // send response back to client
+    string responseJson = JsonConvert.SerializeObject(req);
+    context.Response.ContentType = "application/json";
+    context.Response.ContentLength = responseJson.Length;
+    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+});
+
 
 app.Run();
 
