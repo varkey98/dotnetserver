@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using Grpc.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using OpenTelemetry;
@@ -76,6 +77,10 @@ app.MapPost("/hello", async delegate (HttpContext context)
 
 
     // send response back to client
+    foreach (var header in request.Headers) 
+    {
+        context.Response.Headers.TryAdd("echo." + header.Key,header.Value);
+    }
     string responseJson = JsonConvert.SerializeObject(req);
     context.Response.ContentType = "application/json";
     context.Response.ContentLength = responseJson.Length;
@@ -104,6 +109,10 @@ app.MapPost("/dotnetecho", async delegate (HttpContext context)
 
 
     // send response back to client
+    foreach (var header in request.Headers) 
+    {
+        context.Response.Headers.TryAdd("echo." + header.Key,header.Value);
+    }
     string responseJson = JsonConvert.SerializeObject(req);
     context.Response.ContentType = "application/json";
     context.Response.ContentLength = responseJson.Length;
@@ -133,6 +142,15 @@ app.MapPost("/echo", async delegate (HttpContext context)
 
     // send response back to client
     string responseJson = JsonConvert.SerializeObject(req);
+    context.Response.ContentType = "application/json";
+    context.Response.ContentLength = responseJson.Length;
+    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+});
+
+app.MapGet("/health", async delegate (HttpContext context) 
+{
+    StatusClass status = new() { Status="OK"};
+    string responseJson = JsonConvert.SerializeObject(status);
     context.Response.ContentType = "application/json";
     context.Response.ContentLength = responseJson.Length;
     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
@@ -225,4 +243,9 @@ internal static class HttpRequestMessageContextPropagation
         request.Headers.Remove(name);
         request.Headers.Add(name, value);
     };
+}
+
+public class StatusClass
+{
+    public string Status {get; set;}
 }

@@ -12,6 +12,10 @@ public class CatFactService(ILogger<CatFactService> logger, HttpClient client) :
 
     public override async Task<CatFactResponse> CatFact(CatFactRequest request, ServerCallContext context)
     {
+        foreach(var header in context.RequestHeaders)
+        {
+            Console.WriteLine($"{header.Key} : {header.Value}");
+        }
         return await UpstreamService(request);
     }
 
