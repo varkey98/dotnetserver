@@ -1,91 +1,88 @@
 using System.Diagnostics;
 using System.Text;
-using Grpc.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
-using OpenTelemetry;
-using OpenTelemetry.Context.Propagation;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
-// builder.Services.AddTraceableAgent(Traceable.Instrumentations.AspNetCore);
+// builder.Services.AddTraceableAgent();
 builder.Services.Configure<KestrelServerOptions>(o => o.AllowSynchronousIO = false);
 var app = builder.Build();
 var httpClient = new HttpClient();
-app.MapPost("/hello", async delegate (HttpContext context)
-{
-    long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+// app.MapPost("/hello", async delegate (HttpContext context)
+// {
+//     long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-    HttpRequest request = context.Request;
+//     HttpRequest request = context.Request;
 
-    // parse request 
-    Request req = new();
-    using (var sr = new StreamReader(context.Request.Body))
-    {
-        string requestJson = await sr.ReadToEndAsync();
-        req = JsonConvert.DeserializeAnonymousType(requestJson, req);
-    }
+//     // parse request 
+//     Request req = new();
+//     using (var sr = new StreamReader(context.Request.Body))
+//     {
+//         string requestJson = await sr.ReadToEndAsync();
+//         req = JsonConvert.DeserializeAnonymousType(requestJson, req);
+//     }
 
-    var upstreamRequest = new UpStreamRequest { Val1 = req.Num1, Val2 = req.Num2 };
-    var upstreamReqBody = new StringContent(
-        JsonConvert.SerializeObject(upstreamRequest),
-        Encoding.UTF8,
-        Application.Json);
-
-
-    using (Activity activity = Activity.Current.Source.StartActivity("GET", ActivityKind.Client))
-    {
-
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8090/sumOfSquares")
-        {
-            Content = upstreamReqBody
-        };
-        var textMapPropagator = Propagators.DefaultTextMapPropagator;
-        if (textMapPropagator is not TraceContextPropagator)
-        {
-            textMapPropagator.Inject(new PropagationContext(activity.Context, Baggage.Current), httpRequest, HttpRequestMessageContextPropagation.HeaderValueSetter);
-        }
-        var httpResponseMessage = await httpClient.SendAsync(httpRequest);
-
-        var upstreamResponse = new UpStreamResponse();
-        var upstreamResponseJson = await httpResponseMessage.Content.ReadAsStringAsync();
-        upstreamResponse = JsonConvert.DeserializeAnonymousType(upstreamResponseJson, upstreamResponse);
-        req.Num2 = upstreamResponse.Result;
-
-    }
-
-    using (Activity activity = Activity.Current.Source.StartActivity("GET", ActivityKind.Client))
-    {
-
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8090/add")
-        {
-            Content = upstreamReqBody
-        };
-        var textMapPropagator = Propagators.DefaultTextMapPropagator;
-        if (textMapPropagator is not TraceContextPropagator)
-        {
-            textMapPropagator.Inject(new PropagationContext(activity.Context, Baggage.Current), httpRequest, HttpRequestMessageContextPropagation.HeaderValueSetter);
-        }
-
-        var httpResponseMessage = await httpClient.SendAsync(httpRequest);
-        var upstreamResponse = new UpStreamResponse();
-        var upstreamResponseJson = await httpResponseMessage.Content.ReadAsStringAsync();
-        upstreamResponse = JsonConvert.DeserializeAnonymousType(upstreamResponseJson, upstreamResponse);
-        req.Num1 = upstreamResponse.Result;
-    }
+//     var upstreamRequest = new UpStreamRequest { Val1 = req.Num1, Val2 = req.Num2 };
+//     var upstreamReqBody = new StringContent(
+//         JsonConvert.SerializeObject(upstreamRequest),
+//         Encoding.UTF8,
+//         Application.Json);
 
 
-    // send response back to client
-    foreach (var header in request.Headers) 
-    {
-        context.Response.Headers.TryAdd("echo." + header.Key,header.Value);
-    }
-    string responseJson = JsonConvert.SerializeObject(req);
-    context.Response.ContentType = "application/json";
-    context.Response.ContentLength = responseJson.Length;
-    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
-});
+//     using (Activity activity = Activity.Current.Source.StartActivity("GET", ActivityKind.Client))
+//     {
+
+//         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8090/sumOfSquares")
+//         {
+//             Content = upstreamReqBody
+//         };
+//         var textMapPropagator = Propagators.DefaultTextMapPropagator;
+//         if (textMapPropagator is not TraceContextPropagator)
+//         {
+//             textMapPropagator.Inject(new PropagationContext(activity.Context, Baggage.Current), httpRequest, HttpRequestMessageContextPropagation.HeaderValueSetter);
+//         }
+//         var httpResponseMessage = await httpClient.SendAsync(httpRequest);
+
+//         var upstreamResponse = new UpStreamResponse();
+//         var upstreamResponseJson = await httpResponseMessage.Content.ReadAsStringAsync();
+//         upstreamResponse = JsonConvert.DeserializeAnonymousType(upstreamResponseJson, upstreamResponse);
+//         req.Num2 = upstreamResponse.Result;
+
+//     }
+
+//     using (Activity activity = Activity.Current.Source.StartActivity("GET", ActivityKind.Client))
+//     {
+
+//         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8090/add")
+//         {
+//             Content = upstreamReqBody
+//         };
+//         var textMapPropagator = Propagators.DefaultTextMapPropagator;
+//         if (textMapPropagator is not TraceContextPropagator)
+//         {
+//             textMapPropagator.Inject(new PropagationContext(activity.Context, Baggage.Current), httpRequest, HttpRequestMessageContextPropagation.HeaderValueSetter);
+//         }
+
+//         var httpResponseMessage = await httpClient.SendAsync(httpRequest);
+//         var upstreamResponse = new UpStreamResponse();
+//         var upstreamResponseJson = await httpResponseMessage.Content.ReadAsStringAsync();
+//         upstreamResponse = JsonConvert.DeserializeAnonymousType(upstreamResponseJson, upstreamResponse);
+//         req.Num1 = upstreamResponse.Result;
+//     }
+
+
+//     // send response back to client
+//     foreach (var header in request.Headers) 
+//     {
+//         context.Response.Headers.TryAdd("echo." + header.Key,header.Value);
+//     }
+//     string responseJson = JsonConvert.SerializeObject(req);
+//     context.Response.ContentType = "application/json";
+//     context.Response.ContentLength = responseJson.Length;
+//     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+// });
 
 app.MapPost("/dotnetecho", async delegate (HttpContext context)
 {
