@@ -141,7 +141,11 @@ public class Program
     static void Run(Flags opts)
     {
         Console.WriteLine("Hello World!");
-        GrpcChannel channel = GrpcChannel.ForAddress(opts.Endpoint);
+        GrpcChannelOptions channelOpts = new() 
+        {
+            Credentials = Grpc.Core.ChannelCredentials.Insecure
+        };
+        GrpcChannel channel = GrpcChannel.ForAddress(opts.Endpoint, channelOpts);
 
         switch (opts.Mode)
         {
@@ -163,5 +167,9 @@ public class Program
     static void ErrorHandling(IEnumerable<Error> errors)
     {
         Console.WriteLine("Fail");
+        foreach(var err in errors)
+        {
+            Console.WriteLine(err.ToString());
+        }
     }
 }

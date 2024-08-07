@@ -1,7 +1,7 @@
 using Grpc.AspNetCore.Server;
 using GrpcServer.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Traceable.Instrumentation.Grpc.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +10,12 @@ builder.Services.AddGrpc();
  
 builder.Services.AddLogging();
 builder.Services.AddHttpClient();
-// builder.Services.AddTraceableAgent();
-
+builder.Services.Configure<KestrelServerOptions>(o => {
+    o.AllowSynchronousIO = false;
+    o.ConfigureEndpointDefaults((listener)=> {
+        listener.Protocols = HttpProtocols.Http2;
+    });
+});
 
 var app = builder.Build();
 

@@ -12,6 +12,7 @@ public class CatFactService(ILogger<CatFactService> logger, HttpClient client) :
 
     public override async Task<CatFactResponse> CatFact(CatFactRequest request, ServerCallContext context)
     {
+        Console.WriteLine("Inside Unary RPC!");
         foreach(var header in context.RequestHeaders)
         {
             Console.WriteLine($"{header.Key} : {header.Value}");
