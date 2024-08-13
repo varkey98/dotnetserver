@@ -6,10 +6,10 @@ using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
+builder.Services.AddHttpClient();
 // builder.Services.AddTraceableAgent();
 builder.Services.Configure<KestrelServerOptions>(o => o.AllowSynchronousIO = false);
 var app = builder.Build();
-var httpClient = new HttpClient();
 // app.MapPost("/hello", async delegate (HttpContext context)
 // {
 //     long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -118,30 +118,16 @@ app.MapPost("/dotnetecho", async delegate (HttpContext context)
 
 app.MapPost("/echo", async delegate (HttpContext context)
 {
-    long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
     HttpRequest request = context.Request;
-
-    // parse request 
-    Request req = new();
+    string body = "";
     using (var sr = new StreamReader(context.Request.Body))
     {
-        string requestJson = await sr.ReadToEndAsync();
-        req = JsonConvert.DeserializeAnonymousType(requestJson, req);
+        body = await sr.ReadToEndAsync();
     }
 
-    var upstreamRequest = new UpStreamRequest { Val1 = req.Num1, Val2 = req.Num2 };
-    var upstreamReqBody = new StringContent(
-        JsonConvert.SerializeObject(upstreamRequest),
-        Encoding.UTF8,
-        Application.Json);
-
-
-    // send response back to client
-    string responseJson = JsonConvert.SerializeObject(req);
-    context.Response.ContentType = "application/json";
-    context.Response.ContentLength = responseJson.Length;
-    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+    context.Response.ContentLength = body.Length;
+    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(body));
+    await context.Response.CompleteAsync();
 });
 
 app.MapGet("/health", async delegate (HttpContext context) 
