@@ -22,6 +22,15 @@ public class Program
 
     public static void Main(string[] args)
     {
+        String obj = "null";
+        try
+        {
+            obj = "test";
+        } catch(Exception) {}
+        try {
+        Console.WriteLine(obj);
+
+        } catch(Exception) {}
         var parser = new Parser(opts =>
         {
             opts.CaseInsensitiveEnumValues = true;

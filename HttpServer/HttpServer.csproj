@@ -11,6 +11,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="4.1.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <!-- <ProjectReference Include="../../dotnetagent/src/Traceable.Agent/Traceable.Agent.csproj" /> -->
+      <PackageReference Include="RestSharp" Version="112.0.0" />
+      <ProjectReference Include="../../dotnetagent/src/Traceable.Agent/Traceable.Agent.csproj" />
     </ItemGroup>
 </Project>

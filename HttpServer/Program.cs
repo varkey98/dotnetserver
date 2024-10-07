@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
+using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
@@ -126,6 +127,7 @@ app.MapPost("/echo", async delegate (HttpContext context)
     }
 
     context.Response.ContentLength = body.Length;
+    context.Response.ContentType = context.Request.ContentType;
     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(body));
     await context.Response.CompleteAsync();
 });
@@ -134,6 +136,39 @@ app.MapGet("/health", async delegate (HttpContext context)
 {
     StatusClass status = new() { Status="OK"};
     string responseJson = JsonConvert.SerializeObject(status);
+    context.Response.ContentType = "application/json";
+    context.Response.ContentLength = responseJson.Length;
+    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+});
+
+app.MapGet("/cat-fact", async delegate(HttpContext context)
+{
+
+    var options = new RestClientOptions("https://catfact.ninja");
+    var client = new RestClient(options);
+    var request = new RestRequest("fact").AddJsonBody(new UpStreamRequest());
+    var response = await client.GetAsync<CatFact>(request);
+    string responseJson = JsonConvert.SerializeObject(response);
+    context.Response.ContentType = "application/json";
+    context.Response.ContentLength = responseJson.Length;
+    await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
+});
+
+app.MapPost("/httpbin-post", async delegate(HttpContext context)
+{
+    // parse request 
+    Request req = new();
+    using (var sr = new StreamReader(context.Request.Body))
+    {
+        string requestJson = await sr.ReadToEndAsync();
+        req = JsonConvert.DeserializeAnonymousType(requestJson, req);
+    }
+
+    var options = new RestClientOptions("https://httpbin.org");
+    var client = new RestClient(options);
+    var request = new RestRequest("post").AddJsonBody(req);
+    var response = await client.PostAsync<HttpbinPostResponse>(request);
+    string responseJson = JsonConvert.SerializeObject(response);
     context.Response.ContentType = "application/json";
     context.Response.ContentLength = responseJson.Length;
     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
@@ -231,4 +266,17 @@ internal static class HttpRequestMessageContextPropagation
 public class StatusClass
 {
     public string Status {get; set;}
+}
+
+public class CatFact
+{
+    public int Length {get; set;}
+    public string Fact {get; set;}
+}
+
+public class HttpbinPostResponse
+{
+    public Request Json {get; set;}
+    public string Origin {get; set;}
+    public string Url {get; set;}
 }
