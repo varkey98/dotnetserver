@@ -12,6 +12,7 @@ COPY appsettings.Development.json src/
 COPY Properties/launchSettings.json src/Properties/
 COPY Protos/cat_fact.proto src/Protos/
 COPY Services/GreeterService.cs src/Services/
+COPY Services/HealthService.cs src/Services/
 
 WORKDIR /src/
 RUN dotnet publish -r linux-arm64 --self-contained true
