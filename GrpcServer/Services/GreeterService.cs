@@ -1,18 +1,21 @@
 using System.Text;
 using Grpc.Core;
+using Grpc.Health.V1;
+using Grpc.HealthCheck;
 using Newtonsoft.Json;
 
 namespace GrpcServer.Services;
 
-public class CatFactService(ILogger<CatFactService> logger, HttpClient client) : CatWorld.CatWorldBase
+public class CatFactService(ILogger<CatFactService> logger, HttpClient client, HealthServiceImpl healthServiceImpl) : CatWorld.CatWorldBase
 {
     private readonly ILogger<CatFactService> logger = logger;
 
     private readonly HttpClient httpClient = client;
+    private readonly HealthServiceImpl healthService = healthServiceImpl;
 
     public override async Task<CatFactResponse> CatFact(CatFactRequest request, ServerCallContext context)
     {
-        Console.WriteLine("Inside Unary RPC!");
+        healthService.SetStatus("", HealthCheckResponse.Types.ServingStatus.Serving);
         foreach(var header in context.RequestHeaders)
         {
             Console.WriteLine($"{header.Key} : {header.Value}");

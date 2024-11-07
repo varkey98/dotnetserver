@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as stage
+FROM ubuntu:24.04 as core
+
+RUN apt update && apt install -y dotnet-sdk-8.0
 
 RUN mkdir -p src/Properties
 RUN mkdir src/Protos
@@ -12,18 +14,9 @@ COPY Protos/cat_fact.proto src/Protos/
 COPY Services/GreeterService.cs src/Services/
 
 WORKDIR /src/
-RUN dotnet publish -r linux-x64 --self-contained true
+RUN dotnet publish -r linux-arm64 --self-contained true
 
-# ENTRYPOINT ["ls"]
-# CMD [ "-l", "/src/bin/Release/net8.0/linux-x64/publish/GrpcServer"]
+EXPOSE 5441
 
-FROM ubuntu:24.04 as core
-
-RUN apt update && apt install -y dotnet-sdk-8.0
-
-COPY --from=stage /src/bin/Release/net8.0/linux-x64/publish/GrpcServer .
-
-EXPOSE 5001
-
-ENTRYPOINT [ "./GrpcServer" ]
-CMD ["--urls=http://0.0.0.0:5001"]
+ENTRYPOINT [ "/src/bin/Release/net8.0/linux-arm64/publish/GrpcServer" ]
+CMD ["--urls=http://0.0.0.0:5441"]
