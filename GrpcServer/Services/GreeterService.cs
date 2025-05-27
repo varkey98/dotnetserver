@@ -6,11 +6,17 @@ using Newtonsoft.Json;
 
 namespace GrpcServer.Services;
 
-public class CatFactService(ILogger<CatFactService> logger, HttpClient client) : CatWorld.CatWorldBase
+public class CatFactService : CatWorld.CatWorldBase
 {
-    private readonly ILogger<CatFactService> logger = logger;
+    private readonly ILogger<CatFactService> logger;
 
-    private readonly HttpClient httpClient = client;
+    private readonly HttpClient httpClient ;
+
+    public CatFactService(ILogger<CatFactService> logger, HttpClient client) {
+
+        this.logger = logger;
+        this.httpClient = client;
+    }
     public override async Task<CatFactResponse> CatFact(CatFactRequest request, ServerCallContext context)
     {
         foreach(var header in context.RequestHeaders)

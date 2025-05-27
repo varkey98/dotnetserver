@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishSingleFile>true</PublishSingleFile>
@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\cat_fact.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\edge-decision-svc.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

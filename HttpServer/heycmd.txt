@@ -1,0 +1,1 @@
+ hey -c 8 -m POST -T application/json -D ./request.json -z 10s -q 250 http://localhost:5001/dotnetecho

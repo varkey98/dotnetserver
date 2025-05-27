@@ -1,0 +1,45 @@
+# environment: dotnet-environment
+service_name: dotnet-service
+enabled: true
+reporting:
+  endpoint: https://34.41.112.176:5443/v1/traces
+  trace_reporter_type: OTLP_HTTP
+  secure: true
+  cert_file: /Users/varkeychanjacob/Projects/dotnetserver/HttpServer/root_ca.crt
+data_capture:
+  http_headers:
+    request: true
+    response: true
+  http_body:
+    request: true
+    response: true
+  rpc_metadata:
+    request: true
+    response: true
+  rpc_body:
+    request: false
+    response: true
+  allowed_content_types:
+    - json
+    - xml
+    - x-www-form-urlencoded
+    - grpc
+  body_max_size_bytes: 512000
+remote_config:
+  enabled: true
+  endpoint: host.docker.internal:8441
+  poll_period_seconds: 30
+blocking_config:
+  enabled: true
+  evaluate_body: true
+  skip_internal_request: false
+  modsecurity:
+    enabled: true
+  region_blocking:
+    enabled: true
+  max_recursion_depth: 20
+  response_status_code: 403
+  response_message: Access Forbidden
+logging:
+  log_mode: LOG_MODE_STDOUT
+  log_level: LOG_LEVEL_INFO

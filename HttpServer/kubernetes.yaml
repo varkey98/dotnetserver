@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnetserver
+spec:
+  selector:
+    matchLabels:
+      run: dotnetserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: dotnetserver
+    spec:
+      containers:
+      - name: dotnetserver
+        image: varkeychanjacob/dotnetserver:amd64
+        ports:
+        - containerPort: 5001

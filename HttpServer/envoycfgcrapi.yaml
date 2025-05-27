@@ -1,0 +1,120 @@
+admin:
+  access_log_path: /dev/null
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 9000
+
+
+node:
+  cluster: service_greeter
+  id: test-id
+
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8080
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          codec_type: AUTO
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/traceable/captcha"
+                route: 
+                  cluster: service_httpbin
+                  prefix_rewrite: "/"
+          http_filters:
+          # - name: envoy.filters.http.ext_authz
+          #   typed_config:
+          #     "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+          #     transport_api_version: V3
+          #     grpc_service:
+          #       envoy_grpc:
+          #         cluster_name: ext_proc_cluster
+          #       timeout: 100s
+          #       initial_metadata:
+          #       - key: "traceableai-module-name"
+          #         value: "istio"
+          #       - key: "traceableai-service-name"
+          #         value: "jacob-test"
+          #       - key: "traceableai-skip-merge-data-flag"
+          #         value: "yes"
+          #     failure_mode_allow: false
+          #     with_request_body:
+          #       max_request_bytes: 1000
+          #       allow_partial_message: true
+          #       pack_as_bytes: true
+
+          - name: envoy.filters.http.ext_proc
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.ext_proc.v3.ExternalProcessor
+              failure_mode_allow: false
+              allow_mode_override: true
+              processing_mode:
+                request_header_mode: "SEND"
+                response_header_mode: "SEND"
+                request_body_mode: "STREAMED"
+                response_body_mode: "STREAMED"
+                request_trailer_mode: "SEND"
+                response_trailer_mode: "SEND"
+              observability_mode: false
+              message_timeout: 100s
+              grpc_service:
+                envoy_grpc:
+                  cluster_name: ext_proc_cluster
+                initial_metadata:
+                - key: "traceableai-module-name"
+                  value: "jacob's envoy"
+                - key: "traceableai-module-version"
+                  value: "1.0.0"
+                - key: "traceableai-environment-name"
+                  value: "jacob-test"
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router  
+  clusters:
+  - name: service_httpbin
+    connect_timeout: 2s
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: service_httpbin
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: httpbin.org
+                port_value: 443
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+  - name: ext_proc_cluster
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    connect_timeout: 1000s
+    http2_protocol_options: {}
+    load_assignment:
+      cluster_name: ext_proc_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: host.docker.internal
+                port_value: 5441

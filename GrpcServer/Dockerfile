@@ -1,6 +1,6 @@
 FROM ubuntu:24.04 as core
 
-RUN apt update && apt install -y dotnet-sdk-8.0
+RUN apt update && apt install -y software-properties-common && add-apt-repository -y ppa:dotnet/backports && apt install -y dotnet-sdk-6.0
 
 RUN mkdir -p src/Properties
 RUN mkdir src/Protos
@@ -10,14 +10,13 @@ COPY Program.cs src/
 COPY appsettings.json src/
 COPY appsettings.Development.json src/
 COPY Properties/launchSettings.json src/Properties/
-COPY Protos/cat_fact.proto src/Protos/
-COPY Services/GreeterService.cs src/Services/
-COPY Services/HealthService.cs src/Services/
+COPY Protos/ src/Protos/
+COPY Services/ src/Services/
 
 WORKDIR /src/
-RUN dotnet publish -r linux-arm64 --self-contained true
+RUN dotnet publish -r linux-arm64 -f net6.0 --self-contained false
 
-EXPOSE 5441
+EXPOSE 5001
 
-ENTRYPOINT [ "/src/bin/Release/net8.0/linux-arm64/publish/GrpcServer" ]
-CMD ["--urls=http://0.0.0.0:5441"]
+ENTRYPOINT [ "/src/bin/Debug/net6.0/linux-arm64/GrpcServer" ]
+CMD ["--urls=http://0.0.0.0:5001"]

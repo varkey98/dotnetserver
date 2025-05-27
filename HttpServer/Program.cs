@@ -4,13 +4,15 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 using RestSharp;
+using Traceable.Instrumentation.AspNetCore.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.InitTraceableAgent();
 builder.Services.AddLogging();
 builder.Services.AddHttpClient();
-// builder.Services.AddTraceableAgent();
 builder.Services.Configure<KestrelServerOptions>(o => o.AllowSynchronousIO = false);
 var app = builder.Build();
+app.UseMiddleware<TraceableMiddleware>();
 // app.MapPost("/hello", async delegate (HttpContext context)
 // {
 //     long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -117,7 +119,7 @@ app.MapPost("/dotnetecho", async delegate (HttpContext context)
     await context.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(responseJson));
 });
 
-app.MapPost("/echo", async delegate (HttpContext context)
+app.MapPost("/echo/{*path}", async delegate (HttpContext context)
 {
     HttpRequest request = context.Request;
     string body = "";
