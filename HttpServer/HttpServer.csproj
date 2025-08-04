@@ -10,6 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
+      <PackageReference Include="Google.Cloud.ArtifactRegistry.V1" Version="2.10.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="RestSharp" Version="112.0.0" />
       <PackageReference Include="Traceable.Agent" Version="0.1.0" />

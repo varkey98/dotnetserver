@@ -1,12 +1,16 @@
 using Grpc.AspNetCore.Server;
 using GrpcServer.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // // Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(opts =>
+{
+  opts.EnableDetailedErrors = true;
+  opts.ResponseCompressionAlgorithm = "gzip";
+  opts.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal;
+});
  
 builder.Services.AddLogging();
 builder.Services.AddHttpClient();
