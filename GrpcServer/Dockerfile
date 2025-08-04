@@ -22,4 +22,3 @@ ENV DOTNET_GCDynamicAdaptationMode=1
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 ENTRYPOINT [ "/build/GrpcServer" ]
-CMD ["--urls=http://0.0.0.0:5001"]

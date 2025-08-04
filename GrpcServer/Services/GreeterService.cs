@@ -57,7 +57,7 @@ public class CatFactService : CatWorld.CatWorldBase
 
     private async Task<CatFactResponse> UpstreamService(CatFactRequest request)
     {
-        var response = await httpClient.GetAsync("https://catfact.ninja/fact");
+        var response = await httpClient.GetAsync("http://catfact.ninja/fact");
         var factJson = await response.Content.ReadAsStringAsync(); 
         FactResponse fact = new();
         fact = JsonConvert.DeserializeAnonymousType(factJson, fact);
