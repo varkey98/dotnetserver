@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\cat_fact.proto" GrpcServices="Server" />
-    <Protobuf Include="Protos\edge-decision-svc.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>
