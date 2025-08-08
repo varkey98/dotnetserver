@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc(opts =>
 {
   opts.EnableDetailedErrors = true;
-  opts.ResponseCompressionAlgorithm = "gzip";
-  opts.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal;
+  // opts.ResponseCompressionAlgorithm = "gzip";
+  // opts.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal;
 });
  
 builder.Services.AddLogging();

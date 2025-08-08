@@ -1,0 +1,18 @@
+networks:
+  local-net:
+    external: false
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.35-latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - local-net
+  httpserver:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    networks:
+      - local-net
