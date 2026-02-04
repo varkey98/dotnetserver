@@ -1,0 +1,18 @@
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: BackendConfigPolicy
+metadata:
+  name: extproc-backend-config
+spec: 
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: extprocserver
+  http2ProtocolOptions: 
+    overrideStreamErrorOnInvalidHttpMessage: true
+  tls:
+    insecureSkipVerify: true
+    simpleTLS: true
+    parameters:
+      minVersion: "1.2"
+    alpnProtocols: 
+      - h2

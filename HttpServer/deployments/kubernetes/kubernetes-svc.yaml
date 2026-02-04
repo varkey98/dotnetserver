@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnetserver
+  namespace: kgateway-system
+spec:
+  type: NodePort
+  selector:
+    run: dotnetserver
+  ports:
+  - port: 5001
+    targetPort: 5001
+    nodePort: 30001
+    protocol: TCP

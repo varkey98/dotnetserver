@@ -97,6 +97,11 @@ static_resources:
               socket_address:
                 address: host.docker.internal
                 port_value: 5441
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
   - name: service_http
     connect_timeout: 2s
     type: LOGICAL_DNS

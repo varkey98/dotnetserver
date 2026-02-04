@@ -1,0 +1,38 @@
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: GatewayExtension
+metadata:
+  name: ext-proc-extension
+spec:
+  type: ExtProc
+  extProc:
+    messageTimeout: 100s
+    maxMessageTimeout: 100s
+    failOpen: true
+    routeCacheAction: Clear
+    processingMode:
+      requestHeaderMode: SEND
+      responseHeaderMode: SEND
+      requestBodyMode: STREAMED
+      responseBodyMode: STREAMED
+      requestTrailerMode: SEND
+      responseTrailerMode: SEND
+    grpcService:
+      backendRef:
+        name: extprocserver
+        port: 5441
+      requestTimeout: 10s
+
+---
+
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: TrafficPolicy
+metadata:
+  name: extproc
+spec:
+  extProc:
+    extensionRef:
+      name: ext-proc-extension
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: http

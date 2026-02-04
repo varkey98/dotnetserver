@@ -1,0 +1,30 @@
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: GatewayParameters
+metadata:
+  name: debug-gateway
+  namespace: kgateway-system
+spec:
+  kube: 
+    envoyContainer:
+      bootstrap:
+        logLevel: debug
+---
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1
+metadata:
+  name: http
+  namespace: kgateway-system
+spec:
+  gatewayClassName: kgateway
+  infrastructure:
+    parametersRef:
+      name: debug-gateway
+      group: gateway.kgateway.dev
+      kind: GatewayParameters      
+  listeners:
+  - protocol: HTTP
+    port: 8080
+    name: http
+    allowedRoutes:
+      namespaces:
+        from: All

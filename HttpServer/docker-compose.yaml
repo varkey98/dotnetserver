@@ -3,7 +3,7 @@ networks:
     external: false
 services:
   envoy:
-    image: envoyproxy/envoy:v1.35-latest
+    image: envoyproxy/envoy:v1.32-latest
     ports:
       - "8080:8080"
     volumes:

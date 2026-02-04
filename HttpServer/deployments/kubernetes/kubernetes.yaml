@@ -1,12 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: dotnetserver
+  namespace: kgateway-system
 spec:
   selector:
     matchLabels:
       run: dotnetserver
-  replicas: 1
   template:
     metadata:
       labels:
